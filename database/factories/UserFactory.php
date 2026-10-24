@@ -1,0 +1,43 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+class UserFactory extends Factory
+{
+    protected $model = User::class;
+
+    public function definition(): array
+    {
+        return [
+            'name'                 => fake()->name(),
+            'email'                => fake()->unique()->safeEmail(),
+            'phone'                => fake()->phoneNumber(),
+            'country'              => fake()->randomElement(['GB', 'IE', 'IN', 'PH', 'NG', 'ZA']),
+            'email_verified_at'    => now(),
+            'password'             => Hash::make('password'),
+            'remember_token'       => Str::random(10),
+            'onboarding_completed' => false,
+            'active'               => true,
+        ];
+    }
+
+    public function unverified(): static
+    {
+        return $this->state(fn() => ['email_verified_at' => null]);
+    }
+
+    public function onboarded(): static
+    {
+        return $this->state(fn() => ['onboarding_completed' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn() => ['active' => false]);
+    }
+}
